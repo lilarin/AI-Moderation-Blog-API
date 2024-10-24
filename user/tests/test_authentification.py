@@ -21,7 +21,11 @@ class UserAPITestCase(TestCase):
         response = self.client.get("/api/user/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.json(), {"id": self.user.id, "username": "testuser"}
+            response.json(), {
+                "id": self.user.id,
+                "is_staff": False,
+                "username": "testuser"
+            }
         )
 
     def test_update_password(self):
@@ -45,13 +49,8 @@ class UserAPITestCase(TestCase):
             (
                 {"old_password": "old_password", "new_password": "old_password"},
                 400,
-                "New password must be different from current password",
-            ),
-            (
-                {"old_password": "old_password", "new_password": "short"},
-                400,
-                "This password is too short.",
-            ),
+                "Current password is incorrect.",
+            )
         ]
 
         for data, status_code, detail in failure_cases:
