@@ -9,10 +9,19 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
+    )
     is_blocked = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-created_at"]
 
     def __str__(self):
+        if self.parent:
+            return f"Reply by {self.author} on comment {self.parent.id}"
         return f"Comment by {self.author} on {self.post}"
+
+    @property
+    def is_reply(self):
+        return self.parent is not None
