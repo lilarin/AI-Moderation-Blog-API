@@ -35,46 +35,6 @@ from social_service.settings import (
 router = Router()
 
 
-@router.get(
-    "/{post_id}",
-    response={200: list[CommentSchema], 404: str}
-)
-@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
-@post_exist
-def get_comments_by_post(
-        request: HttpRequest, post_id: int
-) -> list[CommentSchema]:
-    comments = Comment.objects.filter(
-        post_id=post_id
-    )
-
-    if not comments.exists():
-        raise HttpError(
-            status.HTTP_404_NOT_FOUND,
-            "Comments not found")
-
-    return [CommentSchema.from_orm(comment) for comment in comments]
-
-
-@router.post(
-    "/{post_id}/create",
-    response={200: CommentSchema, 400: str},
-    auth=JWTAuth()
-)
-@post_exist
-def create_comment(
-        request: HttpRequest, post_id: int,
-        payload: CreateUpdateCommentSchema
-) -> CommentSchema:
-    comment = Comment(
-        post_id=post_id,
-        author=request.user,
-        text=payload.text
-    )
-    comment.save()
-    return CommentSchema.from_orm(comment)
-
-
 @router.patch(
     "/{comment_id}",
     response={200: CommentSchema, 400: str, 404: str}, auth=JWTAuth()
@@ -107,6 +67,47 @@ def delete_comment(
         status=status.HTTP_200_OK
     )
 
+
+@router.get(
+    "/{post_id}",
+    response={200: list[CommentSchema], 404: str}
+)
+@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
+@post_exist
+def get_comments_by_post(
+        request: HttpRequest, post_id: int
+) -> list[CommentSchema]:
+    comments = Comment.objects.filter(
+        post_id=post_id
+    )
+
+    if not comments.exists():
+        raise HttpError(
+            status.HTTP_404_NOT_FOUND,
+            "Comments not found")
+
+    return [CommentSchema.from_orm(comment) for comment in comments]
+
+
+@router.post(
+    "/create/{post_id}",
+    response={200: CommentSchema, 400: str},
+    auth=JWTAuth()
+)
+@post_exist
+def create_comment(
+        request: HttpRequest, post_id: int,
+        payload: CreateUpdateCommentSchema
+) -> CommentSchema:
+    comment = Comment(
+        post_id=post_id,
+        author=request.user,
+        text=payload.text
+    )
+    comment.save()
+    return CommentSchema.from_orm(comment)
+
+
 def get_comments_count(target_date: date) -> tuple[int, int]:
     total_comments = Comment.objects.filter(
         created_at__date=target_date
@@ -115,6 +116,7 @@ def get_comments_count(target_date: date) -> tuple[int, int]:
         created_at__date=target_date, is_blocked=True
     ).count()
     return total_comments, blocked_comments
+
 
 @router.get(
     "/comments-daily-breakdown/",

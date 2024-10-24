@@ -43,7 +43,7 @@ def get_posts(request: HttpRequest) -> list[PostSchema]:
 
 
 @router.post(
-    "/create",
+    "",
     response={200: PostSchema, 400: str},
     auth=JWTAuth()
 )
