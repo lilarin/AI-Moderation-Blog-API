@@ -16,5 +16,5 @@ class UpdatePasswordSchema(Schema):
 
 
 class CreateUserSchema(Schema):
-    username: str = Field(max_length=150)
+    username: str = Field(min_length=3, max_length=150)
     password: str

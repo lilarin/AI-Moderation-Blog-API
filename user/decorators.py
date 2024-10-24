@@ -26,15 +26,15 @@ def change_password_validation(func: Callable) -> Callable:
         new_password = payload.new_password
         old_password = payload.old_password
 
-        if new_password == old_password:
-            raise HttpError(
-                400,
-                "New password must be different from current password"
-            )
         if not user.check_password(old_password):
             raise HttpError(
                 400,
                 "Current password is incorrect."
+            )
+        if new_password == old_password:
+            raise HttpError(
+                400,
+                "New password must be different from current password"
             )
 
         try:
