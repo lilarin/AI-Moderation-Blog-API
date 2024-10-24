@@ -6,7 +6,7 @@ User = get_user_model()
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     title = models.CharField(max_length=255)
-    text = models.TextField()
+    text = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     reply_time = models.DurationField(null=True, blank=True)
     is_blocked = models.BooleanField(default=False)
