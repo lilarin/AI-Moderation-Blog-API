@@ -28,7 +28,23 @@ def post_exist(func):
     return wrapper
 
 
-def has_access(func: Callable):
+def has_edit_access(func: Callable):
+    @wraps(func)
+    def wrapper(
+            request: HttpRequest,
+            post_id: int, *args, **kwargs
+    ) -> Any:
+        post = Post.objects.get(id=post_id)
+        if not post.author == request.user:
+            raise HttpError(
+                status.HTTP_403_FORBIDDEN,
+                "You do not have permission to do edit this post"
+            )
+        return func(request, post_id, *args, **kwargs)
+    return wrapper
+
+
+def has_delete_access(func: Callable):
     @wraps(func)
     def wrapper(
             request: HttpRequest,
@@ -38,6 +54,7 @@ def has_access(func: Callable):
         if not (request.user.is_staff or post.author == request.user):
             raise HttpError(
                 status.HTTP_403_FORBIDDEN,
-                "You do not have permission to do this")
+                "You do not have permission to do delete this post"
+            )
         return func(request, post_id, *args, **kwargs)
     return wrapper
