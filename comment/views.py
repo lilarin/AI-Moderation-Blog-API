@@ -6,6 +6,10 @@ from datetime import (
 from django.http import HttpRequest
 from ninja import Router, Query
 from ninja.errors import HttpError
+from ninja.pagination import (
+    PageNumberPagination,
+    paginate
+)
 from ninja.responses import Response
 from ninja_extra import status
 from ninja_jwt.authentication import JWTAuth
@@ -23,6 +27,10 @@ from comment.schemas import (
     CommentAnalytics
 )
 from post.decorators import post_exist
+from social_service.settings import (
+    PAGE_PAGINATION_NUMBER,
+    BREAKDOWN_PAGINATION_NUMBER
+)
 
 router = Router()
 
@@ -31,6 +39,7 @@ router = Router()
     "/{post_id}",
     response={200: list[CommentSchema], 404: str}
 )
+@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 @post_exist
 def get_comments_by_post(
         request: HttpRequest, post_id: int
@@ -111,6 +120,7 @@ def get_comments_count(target_date: date) -> tuple[int, int]:
     "/comments-daily-breakdown/",
     response=list[CommentAnalytics]
 )
+@paginate(PageNumberPagination, page_size=BREAKDOWN_PAGINATION_NUMBER)
 def comments_daily_breakdown(
         request: HttpRequest,
         params: DateRangeSchema = Query(...)

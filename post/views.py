@@ -1,9 +1,14 @@
 from django.http import HttpRequest
 from ninja import Router
 from ninja.responses import Response
+from ninja.pagination import (
+    paginate,
+    PageNumberPagination
+)
 from ninja_extra import status
 from ninja_jwt.authentication import JWTAuth
 
+from social_service.settings import PAGE_PAGINATION_NUMBER
 from post.decorators import (
     post_exist,
     has_delete_access,
@@ -21,6 +26,7 @@ router = Router()
 
 
 @router.get("", response=list[PostSchema])
+@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 def get_posts(request: HttpRequest) -> list[PostSchema]:
     posts = Post.objects.all()
     post_schemas = []
