@@ -61,7 +61,7 @@ def create_post(
     )
     if payload.reply_time:
         post.reply_time = payload.reply_time
-    if  payload.reply_on_comments:
+    if payload.reply_on_comments:
         post.reply_on_comments = payload.reply_on_comments
 
     post.save()
