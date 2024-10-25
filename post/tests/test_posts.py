@@ -61,7 +61,6 @@ class PostTestCase(TestCase):
             "/api/posts/",
             payload, content_type="application/json"
         )
-        print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["reply_time"], "P0DT00H05M00S")
 
