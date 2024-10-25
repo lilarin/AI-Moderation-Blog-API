@@ -42,12 +42,18 @@ class UserAPITestCase(TestCase):
 
         failure_cases = [
             (
-                {"old_password": "wrong_password", "new_password": "new_password"},
+                {
+                    "old_password": "wrong_password",
+                    "new_password": "new_password"
+                },
                 400,
                 "Current password is incorrect.",
             ),
             (
-                {"old_password": "old_password", "new_password": "old_password"},
+                {
+                    "old_password": "old_password",
+                    "new_password": "old_password"
+                },
                 400,
                 "Current password is incorrect.",
             )

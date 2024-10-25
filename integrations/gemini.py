@@ -20,7 +20,9 @@ def generate_ai_response(prompt: str, bool_answer: bool = False) -> str | None:
                 response_schema=bool,
                 response_mime_type="application/json"
             )
-        ai_response = model.generate_content(contents=prompt, generation_config=config)
+        ai_response = model.generate_content(
+            contents=prompt, generation_config=config
+        )
         if ai_response.candidates[0].finish_reason.name == "SAFETY":
             return "true"
         return ai_response.candidates[0].content.parts[0].text.strip()
@@ -30,8 +32,9 @@ def generate_ai_response(prompt: str, bool_answer: bool = False) -> str | None:
 
 def block_decision(text: str) -> bool | None:
     instruction = (
-        "Answer ONLY True if there are any violations in the text, the presence "
-        "of foul language, mentioning of bad words, etc, or False if not: "
+        "Answer ONLY True if there are any violations in "
+        "the text, the presence of foul language, mentioning "
+        "of bad words, etc, or False if not. "
         "Please analyze the following text for violations:\n"
     )
     prompt = instruction + text
@@ -43,11 +46,12 @@ def block_decision(text: str) -> bool | None:
 
 def response_to_comment(post_text: str, comment_text: str) -> str | None:
     instruction = (
-        "You are the author of the post and not an AI, make a RESPONSE to the USER who commented on your post."
-        " Determine your tone based on the style of the comment and its text.\n"
-        "Post text:\n"
+        "You are the author of the post and not an AI, make "
+        "a RESPONSE to the USER who commented on your post."
+        " Determine your tone based on the style of the comment "
+        "and its text.\n Post text: \n"
     )
-    prompt = f"{instruction}{post_text}\nUser comment:\n{comment_text}"
+    prompt = f"{instruction}{post_text}\nUser comment: \n{comment_text}"
     response_text = generate_ai_response(prompt)
     if response_text:
         return " ".join(response_text.split())

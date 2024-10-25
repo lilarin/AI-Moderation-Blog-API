@@ -37,7 +37,7 @@ class CommentAPITestCase(TestCase):
             payload, content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['text'], "New Comment")
+        self.assertEqual(response.json()["text"], "New Comment")
         self.assertTrue(Comment.objects.filter(text="New Comment").exists())
 
     def test_create_comment_unauthenticated(self):
@@ -81,7 +81,9 @@ class CommentAPITestCase(TestCase):
     def test_delete_other_user_comment_without_permission(self):
         self.authenticate()
         admin_post = Post.objects.create(
-            title="Test Admin Post", text="Test Admin Content", author=self.admin_user
+            title="Test Admin Post",
+            text="Test Admin Content",
+            author=self.admin_user
         )
         admin_comment = Comment.objects.create(
             post=admin_post, author=self.admin_user, text="Test Admin Comment"

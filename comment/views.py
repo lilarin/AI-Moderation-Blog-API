@@ -43,7 +43,9 @@ router = Router()
 )
 @paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 @post_exist
-def get_comments_by_post(request: HttpRequest, post_id: int) -> list[CommentSchema]:
+def get_comments_by_post(
+        request: HttpRequest, post_id: int
+) -> list[CommentSchema]:
     comments = Comment.objects.filter(
         post_id=post_id
     ).select_related("author").prefetch_related("replies")

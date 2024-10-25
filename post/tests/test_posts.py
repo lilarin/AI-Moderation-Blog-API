@@ -6,6 +6,7 @@ from post.models import Post
 
 User = get_user_model()
 
+
 class PostTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -39,14 +40,17 @@ class PostTestCase(TestCase):
             "text": "New Post Content",
             "reply_time": "01:00:00"
         }
-        response = self.client.post("/api/posts/", payload, content_type="application/json")
+        response = self.client.post(
+            "/api/posts/",
+            payload, content_type="application/json"
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['title'], "New Post")
+        self.assertEqual(response.json()["title"], "New Post")
 
     def test_get_post(self):
         response = self.client.get(f"/api/posts/{self.post.id}")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['title'], self.post.title)
+        self.assertEqual(response.json()["title"], self.post.title)
 
     def test_edit_post(self):
         self.authenticate()
@@ -55,7 +59,8 @@ class PostTestCase(TestCase):
             "text": "Updated Content"
         }
         response = self.client.patch(
-            f"/api/posts/{self.post.id}", payload, content_type="application/json"
+            f"/api/posts/{self.post.id}",
+            payload, content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
         self.post.refresh_from_db()
@@ -68,7 +73,8 @@ class PostTestCase(TestCase):
             "text": "Updated Content"
         }
         response = self.client.patch(
-            f"/api/posts/{self.post.id}", payload, content_type="application/json"
+            f"/api/posts/{self.post.id}",
+            payload, content_type="application/json"
         )
         self.assertEqual(response.status_code, 403)
 

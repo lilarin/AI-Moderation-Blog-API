@@ -48,14 +48,16 @@ def change_password_validation(func: Callable) -> Callable:
         return func(request, payload, *args, **kwargs)
     return wrapper
 
+
 def username_availability(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(
             request: HttpRequest,
             payload: CreateUserSchema, *args, **kwargs
     ) -> Any:
-        User = get_user_model()
-        if User.objects.filter(username=payload.username).exists():
+        if get_user_model().objects.filter(
+                username=payload.username
+        ).exists():
             raise HttpError(
                 400,
                 "Username is already taken."

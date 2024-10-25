@@ -29,12 +29,16 @@ router = Router()
 @router.get("", response=list[PostSchema])
 @paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 def get_posts(request: HttpRequest) -> list[PostSchema]:
-    posts = Post.objects.prefetch_related('comments__replies', 'author').all()
+    posts = Post.objects.prefetch_related(
+        "comments__replies", "author"
+    ).all()
     post_schemas = []
 
     for post in posts:
         post_schema = PostSchema.from_orm(post)
-        post_schema.comments = CommentSchema.build_comment_hierarchy(post.comments.all())
+        post_schema.comments = CommentSchema.build_comment_hierarchy(
+            post.comments.all()
+        )
         post_schemas.append(post_schema)
 
     return post_schemas
@@ -66,7 +70,9 @@ def create_post(
 )
 @post_exist
 def get_post(request: HttpRequest, post_id: int) -> PostSchema:
-    post = Post.objects.prefetch_related('comments__replies', 'author').get(id=post_id)
+    post = Post.objects.prefetch_related(
+        "comments__replies", "author"
+    ).get(id=post_id)
 
     root_comments = CommentSchema.build_comment_hierarchy(post.comments.all())
 

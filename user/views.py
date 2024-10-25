@@ -21,6 +21,7 @@ from user.schemas import (
 
 router = Router()
 
+
 @router.get("", response=UserSchema, auth=JWTAuth())
 def get_user(request: HttpRequest) -> UserSchema:
     return UserSchema.from_orm(request.user)
@@ -55,7 +56,8 @@ def register_user(
         )
 
     with transaction.atomic():
-        User = get_user_model()
-        user = User.objects.create_user(username=payload.username)
+        user = get_user_model().objects.create_user(
+            username=payload.username
+        )
         user.set_password(payload.password)
     return UserSchema.from_orm(user)

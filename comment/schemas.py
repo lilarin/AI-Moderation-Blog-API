@@ -20,8 +20,13 @@ class CommentSchema(Schema):
     replies: list["CommentSchema"] = []
 
     @staticmethod
-    def build_comment_hierarchy(comments: QuerySet[Comment]) -> list["CommentSchema"]:
-        comment_map = {comment.id: CommentSchema.from_orm(comment) for comment in comments}
+    def build_comment_hierarchy(
+            comments: QuerySet[Comment]
+    ) -> list["CommentSchema"]:
+        comment_map = {
+            comment.id: CommentSchema.from_orm(comment)
+            for comment in comments
+        }
         root_comments = []
 
         for comment in comments:
@@ -47,6 +52,7 @@ class UpdateCommentSchema(Schema):
 class DateRangeSchema(Schema):
     date_from: date
     date_to: date
+
 
 class CommentAnalytics(Schema):
     date: date
