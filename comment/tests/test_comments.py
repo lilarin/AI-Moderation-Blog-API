@@ -1,4 +1,7 @@
-from django.test import TestCase, Client
+from django.test import (
+    TestCase,
+    Client
+)
 from ninja_jwt.tokens import AccessToken
 from comment.models import Comment
 from post.models import Post

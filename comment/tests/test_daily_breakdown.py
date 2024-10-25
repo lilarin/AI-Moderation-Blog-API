@@ -1,5 +1,8 @@
 from datetime import date, timedelta
-from django.test import TestCase, Client
+from django.test import (
+    TestCase,
+    Client
+)
 from ninja_jwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 
