@@ -20,8 +20,4 @@ class Comment(models.Model):
     def __str__(self):
         if self.parent:
             return f"Reply by {self.author} on comment {self.parent.id}"
-        return f"Comment by {self.author} on {self.post}"
-
-    @property
-    def is_reply(self):
-        return self.parent is not None
+        return f"Comment by {self.author} with text {self.text}"
