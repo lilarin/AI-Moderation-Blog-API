@@ -2,5 +2,6 @@
 .venv/
 .pytest_cache/
 **__pycache__/
+.env
 celerybeat-schedule
 db.sqlite3
