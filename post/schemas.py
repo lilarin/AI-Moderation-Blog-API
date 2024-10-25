@@ -21,7 +21,7 @@ class PostSchema(Schema):
     created_at: datetime
     reply_time: timedelta
     is_blocked: bool
-    comments: list[CommentSchema] = None
+    comments: list[CommentSchema] = []
 
 
 class CreatePostSchema(Schema):

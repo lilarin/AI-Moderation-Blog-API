@@ -8,6 +8,7 @@ from ninja.pagination import (
 from ninja_extra import status
 from ninja_jwt.authentication import JWTAuth
 
+from integrations.gemini import block_decision
 from social_service.settings import PAGE_PAGINATION_NUMBER
 from post.decorators import (
     post_exist,
@@ -28,15 +29,12 @@ router = Router()
 @router.get("", response=list[PostSchema])
 @paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 def get_posts(request: HttpRequest) -> list[PostSchema]:
-    posts = Post.objects.all()
+    posts = Post.objects.prefetch_related('comments__replies', 'author').all()
     post_schemas = []
 
     for post in posts:
         post_schema = PostSchema.from_orm(post)
-        post_schema.comments = [
-            CommentSchema.from_orm(comment)
-            for comment in post.comments.all()
-        ]
+        post_schema.comments = CommentSchema.build_comment_hierarchy(post.comments.all())
         post_schemas.append(post_schema)
 
     return post_schemas
@@ -50,11 +48,13 @@ def get_posts(request: HttpRequest) -> list[PostSchema]:
 def create_post(
         request: HttpRequest, payload: CreatePostSchema
 ) -> PostSchema:
+    decision = block_decision(payload.title + payload.text)
     post = Post(
         author=request.user,
         title=payload.title,
         text=payload.text,
-        reply_time=payload.reply_time
+        reply_time=payload.reply_time,
+        is_blocked=decision
     )
     post.save()
     return PostSchema.from_orm(post)
@@ -66,8 +66,14 @@ def create_post(
 )
 @post_exist
 def get_post(request: HttpRequest, post_id: int) -> PostSchema:
-    post = Post.objects.get(id=post_id)
-    return post
+    post = Post.objects.prefetch_related('comments__replies', 'author').get(id=post_id)
+
+    root_comments = CommentSchema.build_comment_hierarchy(post.comments.all())
+
+    post_schema = PostSchema.from_orm(post)
+    post_schema.comments = root_comments
+
+    return post_schema
 
 
 @router.patch(

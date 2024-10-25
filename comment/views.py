@@ -14,6 +14,7 @@ from ninja.responses import Response
 from ninja_extra import status
 from ninja_jwt.authentication import JWTAuth
 
+from integrations.gemini import block_decision
 from comment.models import Comment
 from comment.decorators import (
     comment_exist,
@@ -22,7 +23,8 @@ from comment.decorators import (
 )
 from comment.schemas import (
     CommentSchema,
-    CreateUpdateCommentSchema,
+    CreateCommentSchema,
+    UpdateCommentSchema,
     DateRangeSchema,
     CommentAnalytics
 )
@@ -35,6 +37,24 @@ from social_service.settings import (
 router = Router()
 
 
+@router.get(
+    "/post/{post_id}",
+    response={200: list[CommentSchema], 404: str}
+)
+@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
+@post_exist
+def get_comments_by_post(request: HttpRequest, post_id: int) -> list[CommentSchema]:
+    comments = Comment.objects.filter(
+        post_id=post_id
+    ).select_related("author").prefetch_related("replies")
+    if not comments.exists():
+        raise HttpError(
+            status.HTTP_404_NOT_FOUND,
+            "Comments not found"
+        )
+    return CommentSchema.build_comment_hierarchy(comments)
+
+
 @router.patch(
     "/{comment_id}",
     response={200: CommentSchema, 400: str, 404: str}, auth=JWTAuth()
@@ -43,7 +63,7 @@ router = Router()
 @has_edit_access
 def edit_comment(
         request: HttpRequest, comment_id: int,
-        payload: CreateUpdateCommentSchema
+        payload: UpdateCommentSchema
 ) -> CommentSchema:
     comment = Comment.objects.get(id=comment_id)
     comment.text = payload.text
@@ -68,27 +88,6 @@ def delete_comment(
     )
 
 
-@router.get(
-    "/{post_id}",
-    response={200: list[CommentSchema], 404: str}
-)
-@paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
-@post_exist
-def get_comments_by_post(
-        request: HttpRequest, post_id: int
-) -> list[CommentSchema]:
-    comments = Comment.objects.filter(
-        post_id=post_id
-    )
-
-    if not comments.exists():
-        raise HttpError(
-            status.HTTP_404_NOT_FOUND,
-            "Comments not found")
-
-    return [CommentSchema.from_orm(comment) for comment in comments]
-
-
 @router.post(
     "/create/{post_id}",
     response={200: CommentSchema, 400: str},
@@ -97,13 +96,30 @@ def get_comments_by_post(
 @post_exist
 def create_comment(
         request: HttpRequest, post_id: int,
-        payload: CreateUpdateCommentSchema
+        payload: CreateCommentSchema
 ) -> CommentSchema:
+    decision = block_decision(payload.text)
     comment = Comment(
         post_id=post_id,
         author=request.user,
-        text=payload.text
+        text=payload.text,
+        is_blocked=decision
     )
+    if payload.parent_id:
+        try:
+            parent = Comment.objects.get(id=payload.parent_id)
+            if parent.post_id != post_id:
+                raise HttpError(
+                    status.HTTP_400_BAD_REQUEST,
+                    "Parent comment should be from the same post"
+                )
+            comment.parent = parent
+        except Comment.DoesNotExist:
+            raise HttpError(
+                status.HTTP_400_BAD_REQUEST,
+                "Parent comment does not exist"
+            )
+
     comment.save()
     return CommentSchema.from_orm(comment)
 
