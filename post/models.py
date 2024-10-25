@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -12,7 +14,7 @@ class Post(models.Model):
     text = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     reply_on_comments = models.BooleanField(default=False)
-    reply_time = models.DurationField(null=True, blank=True)
+    reply_time = models.DurationField(default=timedelta(minutes=5))
     is_blocked = models.BooleanField(default=False)
 
     class Meta:

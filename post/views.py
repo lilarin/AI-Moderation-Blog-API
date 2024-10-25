@@ -31,7 +31,7 @@ router = Router()
 def get_posts(request: HttpRequest) -> list[PostSchema]:
     posts = Post.objects.prefetch_related(
         "comments__replies", "author"
-    ).all()
+    )
     post_schemas = []
 
     for post in posts:
@@ -57,9 +57,13 @@ def create_post(
         author=request.user,
         title=payload.title,
         text=payload.text,
-        reply_time=payload.reply_time,
         is_blocked=decision
     )
+    if payload.reply_time:
+        post.reply_time = payload.reply_time
+    if  payload.reply_on_comments:
+        post.reply_on_comments = payload.reply_on_comments
+
     post.save()
     return PostSchema.from_orm(post)
 
@@ -74,10 +78,10 @@ def get_post(request: HttpRequest, post_id: int) -> PostSchema:
         "comments__replies", "author"
     ).get(id=post_id)
 
-    root_comments = CommentSchema.build_comment_hierarchy(post.comments.all())
-
     post_schema = PostSchema.from_orm(post)
-    post_schema.comments = root_comments
+    post_schema.comments = CommentSchema.build_comment_hierarchy(
+        post.comments.all()
+    )
 
     return post_schema
 
@@ -100,6 +104,22 @@ def edit_post(
         post.text = payload.text
     if payload.reply_time is not None:
         post.reply_time = payload.reply_time
+
+    post.save()
+    return PostSchema.from_orm(post)
+
+
+@router.patch(
+    "/{post_id}/toggle",
+    response={200: PostSchema}, auth=JWTAuth()
+)
+@post_exist
+@has_edit_access
+def toggle_auto_replay(
+        request: HttpRequest, post_id: int
+) -> PostSchema:
+    post = Post.objects.get(id=post_id)
+    post.reply_on_comments = not post.reply_on_comments
 
     post.save()
     return PostSchema.from_orm(post)

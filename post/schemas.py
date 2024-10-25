@@ -19,15 +19,23 @@ class PostSchema(Schema):
     text: str = Field(min_length=6, max_length=255)
     author: UserSchema
     created_at: datetime
-    reply_time: timedelta
+    reply_on_comments: bool = False
+    reply_time: Optional[timedelta] = timedelta(minutes=5)
     is_blocked: bool
     comments: list[CommentSchema] = []
+
+    @staticmethod
+    def resolve_reply_time(obj):
+        if not obj.reply_on_comments:
+            return None
+        return obj.reply_time
 
 
 class CreatePostSchema(Schema):
     title: str = Field(min_length=6, max_length=255)
     text: str = Field(min_length=6, max_length=255)
-    reply_time: timedelta
+    reply_on_comments: Optional[bool] = False
+    reply_time: Optional[timedelta] = None
 
 
 class UpdatePostSchema(Schema):
