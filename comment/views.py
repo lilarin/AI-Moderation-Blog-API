@@ -125,7 +125,10 @@ def create_comment(
     comment.save()
 
     try:
-        if comment.post.reply_on_comments and comment.post.author != comment.author:
+        if (
+                comment.post.reply_on_comments
+                and comment.post.author != comment.author
+        ):
             auto_reply_to_comment.apply_async(
                 args=[comment.id],
                 countdown=int(comment.post.reply_time.total_seconds())

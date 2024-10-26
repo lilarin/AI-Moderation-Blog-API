@@ -46,7 +46,6 @@ def block_decision(text: str) -> bool:
     return False
 
 
-
 def response_to_comment(post_text: str, comment_text: str) -> str | None:
     instruction = (
         "You are the author of the post and not an AI, make "
