@@ -24,7 +24,7 @@ class DailyBreakdownTestCase(TestCase):
         date_from = date.today() - timedelta(days=1)
         date_to = date.today()
         response = self.client.get(
-            f"/api/comments/comments-daily-breakdown/"
+            f"/api/comments/daily-breakdown/"
             f"?date_from={date_from}&date_to={date_to}"
         )
         self.assertEqual(response.status_code, 200)
@@ -34,7 +34,7 @@ class DailyBreakdownTestCase(TestCase):
         date_from = date.today() + timedelta(days=1)
         date_to = date.today()
         response = self.client.get(
-            f"/api/comments/comments-daily-breakdown/"
+            f"/api/comments/daily-breakdown/"
             f"?date_from={date_from}&date_to={date_to}"
         )
         self.assertEqual(response.status_code, 400)
@@ -43,7 +43,7 @@ class DailyBreakdownTestCase(TestCase):
         date_from = "incorrect data"
         date_to = None
         response = self.client.get(
-            f"/api/comments/comments-daily-breakdown/"
+            f"/api/comments/daily-breakdown/"
             f"?date_from={date_from}&date_to={date_to}"
         )
         self.assertEqual(response.status_code, 422)
