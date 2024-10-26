@@ -2,8 +2,9 @@ from celery import shared_task
 from comment.models import Comment
 from integrations.gemini import response_to_comment
 
+
 @shared_task
-def auto_reply_to_comment(comment_id: int):
+def auto_reply_to_comment(comment_id: int) -> None:
     try:
         comment = Comment.objects.get(id=comment_id)
         post = comment.post

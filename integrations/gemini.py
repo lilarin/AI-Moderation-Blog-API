@@ -12,7 +12,9 @@ genai.configure(api_key=SECRET_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 
-def generate_ai_response(prompt: str, bool_answer: bool = False) -> str | None:
+def generate_ai_response(
+        prompt: str, bool_answer: bool = False
+) -> str | None:
     try:
         config = None
         if bool_answer:
@@ -30,7 +32,7 @@ def generate_ai_response(prompt: str, bool_answer: bool = False) -> str | None:
         return
 
 
-def block_decision(text: str) -> bool | None:
+def block_decision(text: str) -> bool:
     instruction = (
         "Answer ONLY True if there are any violations in "
         "the text, the presence of foul language, mentioning "
@@ -42,6 +44,7 @@ def block_decision(text: str) -> bool | None:
     if response_text:
         return response_text.lower() == "true"
     return False
+
 
 
 def response_to_comment(post_text: str, comment_text: str) -> str | None:
