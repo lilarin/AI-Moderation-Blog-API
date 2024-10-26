@@ -56,5 +56,7 @@ def response_to_comment(post_text: str, comment_text: str) -> str | None:
     prompt = f"{instruction}{post_text}\nUser comment: \n{comment_text}"
     response_text = generate_ai_response(prompt)
     if response_text:
+        if len(response_text) > 250:
+            return response_to_comment(post_text, comment_text)
         return " ".join(response_text.split())
     return None
