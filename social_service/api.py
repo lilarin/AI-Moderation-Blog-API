@@ -8,8 +8,8 @@ from comment.views import router as comment_router
 
 api = NinjaAPI()
 
-api.add_router("token/", router=obtain_pair_router, tags=["token"])
-api.add_router("token/", router=verify_router, tags=["token"])
+api.add_router("user/token/", router=obtain_pair_router, tags=["user"])
+api.add_router("user/token/", router=verify_router, tags=["user"])
 api.add_router("user/", router=user_router, tags=["user"])
 api.add_router("posts/", router=post_router, tags=["posts"])
 api.add_router("comments/", router=comment_router, tags=["comments"])
