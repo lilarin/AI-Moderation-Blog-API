@@ -55,7 +55,7 @@ class CommentAPITestCase(TestCase):
         self.authenticate()
         payload = {"text": "Updated Comment"}
         response = self.client.patch(
-            f"/api/comments/{self.post.id}",
+            f"/api/comments/{self.comment.id}",
             payload, content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)

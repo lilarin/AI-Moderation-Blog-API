@@ -48,7 +48,7 @@ class PostTestCase(TestCase):
             payload, content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["reply_time"], None)
+        self.assertEqual(response.json()["reply_time"], "P0DT01H00M00S")
 
     def test_create_post_with_auto_replay_default_time(self):
         self.authenticate()
