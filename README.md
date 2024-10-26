@@ -55,7 +55,6 @@ To use the API, you need to create a user account and obtain a JWT token:
 - **Framework**: [Django Ninja](https://django-ninja.dev/)
 - **AI Moderation**: [GeminiAI](https://ai.google.dev/pricing) for free AI-based content moderation.
 - **Background Task Processing**: [Celery](https://docs.celeryproject.org/) to handle delayed responses.
-- **Testing**: Tests for core functionalities such as post creation and analytics, with additional tests recommended for all API endpoints.
 
 ## Installation
 
