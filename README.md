@@ -35,7 +35,7 @@ To use the API, you need to create a user account and obtain a JWT token:
 
 5. **Analytics on Comments**
    - Provides a daily breakdown of comments over a specified period.
-   - Example URL: `/api/comments-daily-breakdown?date_from=2020-02-02&date_to=2022-02-15`.
+   - Example URL: `/api/comments/daily-breakdown?date_from=2024-10-23&date_to=2024-10-26`.
    - Returns aggregated statistics by day, showing the number of comments created and the number of blocked comments.
 
 6. **Automated Comment Responses**
@@ -136,7 +136,7 @@ To use the API, you need to create a user account and obtain a JWT token:
   - `/api/comments/post/<post_id>`
   - `/api/comments/create/<post_id>`
   - `/api/comments/<comment_id>`
-  - `/api/comments/comments-daily-breakdown`
+  - `/api/comments/daily-breakdown`
 
 ## Environment Variables
 
