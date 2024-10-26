@@ -51,7 +51,11 @@ def has_delete_access(func: Callable):
             comment_id: int, *args, **kwargs
     ) -> Any:
         comment = Comment.objects.get(id=comment_id)
-        if not (request.user.is_staff or comment.author == request.user):
+        if not (
+                request.user.is_staff or
+                comment.author == request.user or
+                comment.post.author == request.user
+        ):
             raise HttpError(
                 status.HTTP_403_FORBIDDEN,
                 "You do not have permission to delete this comment"
