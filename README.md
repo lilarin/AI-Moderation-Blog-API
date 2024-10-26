@@ -4,9 +4,7 @@ The goal of this project is to develop a streamlined API for managing posts and 
 with integrated AI moderation and automated response functionality. 
 Built using the Django Ninja framework, the system leverages GeminiAI 
 for intelligent content moderation and Celery for automated response task handling, 
-ensuring efficient processing of moderation tasks and automated replies. 
-This API is designed to support front-end applications or other systems, providing 
-reliable tools for content management, enhanced by AI-driven features.
+ensuring efficient processing of moderation tasks and automated replies.
 
 ## Authentication
 
@@ -91,14 +89,14 @@ To use the API, you need to create a user account and obtain a JWT token:
     > **Note**: Running the development server this way will not start 
     > Celery and auto-reply features will be unavailable.
 
-5. (Optional) **Run the tests**
+5. (Optional) **Run the tests**:
     ```
     python manage.py test
     ```
 
 ### Run with Docker:
 
-> **Note**: you can access to the docker terminal using command:
+> **Note**: You can access to the docker terminal using command:
    ``docker-compose exec social_service sh``
 
 1. **Launch Docker application**:
@@ -113,7 +111,7 @@ To use the API, you need to create a user account and obtain a JWT token:
    python manage.py createsuperuser
    ```
 
-4. (Optional) **Run the tests**
+4. (Optional) **Run the tests**:
     ```
     python manage.py test
     ```
@@ -144,5 +142,5 @@ To use the API, you need to create a user account and obtain a JWT token:
 
 This project uses environment variables to manage sensitive 
 settings like API keys, database configurations, etc. Ensure
-you create a `.env.sample` file in the root directory and set
+you create a `.env` file based on `.env.sample` in the root directory and set
 the required environment variables before running the project.
