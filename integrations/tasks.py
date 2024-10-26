@@ -7,15 +7,13 @@ from integrations.gemini import response_to_comment
 def auto_reply_to_comment(comment_id: int) -> None:
     try:
         comment = Comment.objects.get(id=comment_id)
-        post = comment.post
-        if post.reply_on_comments:
-            reply = response_to_comment(post.text, comment.text)
-            new_comment = Comment(
-                post=post,
-                author=post.author,
-                text=reply,
-                parent=comment
-            )
-            new_comment.save()
+        reply = response_to_comment(comment.post.text, comment.text)
+        new_comment = Comment(
+            post=comment.post,
+            author=comment.post.author,
+            text=reply,
+            parent=comment
+        )
+        new_comment.save()
     except Comment.DoesNotExist:
         pass

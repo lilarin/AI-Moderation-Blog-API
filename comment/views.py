@@ -124,19 +124,13 @@ def create_comment(
             )
     comment.save()
 
-    try:
-        if (
-                comment.post.reply_on_comments
-                and comment.post.author != comment.author
-        ):
-            auto_reply_to_comment.apply_async(
-                args=[comment.id],
-                countdown=int(comment.post.reply_time.total_seconds())
-            )
-    except Exception as e:
-        raise HttpError(
-            status.HTTP_500_INTERNAL_SERVER_ERROR,
-            str(e)
+    if (
+            comment.post.reply_on_comments
+            and comment.post.author != comment.author
+    ):
+        auto_reply_to_comment.apply_async(
+            kwargs={"comment_id": comment.id},
+            countdown=int(comment.post.reply_time.total_seconds())
         )
 
     return CommentSchema.from_orm(comment)
