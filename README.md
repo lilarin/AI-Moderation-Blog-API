@@ -98,7 +98,7 @@ To use the API, you need to create a user account and obtain a JWT token:
 
 ### Run with Docker:
 
-> **Note**: you can access to the project docker terminal using command:
+> **Note**: you can access to the docker terminal using command:
    ``docker-compose exec social_service sh``
 
 1. **Launch Docker application**:
