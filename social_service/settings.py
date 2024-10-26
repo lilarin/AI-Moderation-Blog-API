@@ -66,9 +66,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "social_service.wsgi.application"
 
 
-IS_DOCKER_LAUNCHED = os.environ.get("IS_DOCKER", False)
+USE_DOCKER = os.environ.get("USE_DOCKER", False)
 
-if IS_DOCKER_LAUNCHED:
+if USE_DOCKER:
     ALLOWED_HOSTS = ["*"]
     DATABASES = {
         "default": {
