@@ -147,7 +147,7 @@ def get_comments_count(target_date: date) -> tuple[int, int]:
 
 
 @router.get(
-    "/comments-daily-breakdown/",
+    "/daily-breakdown/",
     response=list[CommentAnalytics]
 )
 @paginate(PageNumberPagination, page_size=BREAKDOWN_PAGINATION_NUMBER)
