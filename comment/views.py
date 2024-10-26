@@ -15,6 +15,7 @@ from ninja_extra import status
 from ninja_jwt.authentication import JWTAuth
 
 from integrations.gemini import block_decision
+from integrations.tasks import auto_reply_to_comment
 from comment.models import Comment
 from comment.decorators import (
     comment_exist,
@@ -121,8 +122,23 @@ def create_comment(
                 status.HTTP_400_BAD_REQUEST,
                 "Parent comment does not exist"
             )
-
     comment.save()
+
+    try:
+        if (
+                comment.post.reply_on_comments and
+                comment.post.author != comment.author
+        ):
+            auto_reply_to_comment.apply_async(
+                args=[comment.id],
+                countdown=int(comment.post.reply_time.total_seconds())
+            )
+    except Exception as e:
+        raise HttpError(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            str(e)
+        )
+
     return CommentSchema.from_orm(comment)
 
 
