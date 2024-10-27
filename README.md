@@ -11,38 +11,38 @@ ensuring efficient processing of moderation tasks and automated replies.
 To use the API, you need to create a user account and obtain a JWT token:
 
 - **Register**: `POST /api/user/register`
-- **Obtain Token**: `POST /api/user/token/pair`
-- **Verify Token**: `POST /api/user/token/verify`
-- **Refresh Token**: `POST /api/user/token/refresh`
+- **Obtain token**: `POST /api/user/token/pair`
+- **Verify token**: `POST /api/user/token/verify`
+- **Refresh token**: `POST /api/user/token/refresh`
 
 ## Core Features
 
-1. **User Registration and JWT Authentication**
+1. **User registration and JWT authentication**
    - Self-registration with username and password.
    - Login using JWT for secure access.
 
-2. **Post Management API**
+2. **Post management API**
    - Create, retrieve, update, and delete posts.
    - Each post is subject to AI-driven moderation to detect offensive language or inappropriate content before it is published.
 
-3. **Comment Management API**
+3. **Comment management API**
    - Create, retrieve, update, and delete comments on posts.
    - Comments are also checked for offensive language, with options to block inappropriate comments.
 
-4. **AI Moderation**: 
+4. **AI moderation**: 
    - Using GeminiAI automatically scans posts and comments for profanity, offensive language, or hate speech
    - Content failing the moderation check is flagged or blocked.
 
-5. **Analytics on Comments**
+5. **Analytics on comments**
    - Provides a daily breakdown of comments over a specified period.
    - Example URL: `/api/comments/daily-breakdown?date_from=2024-10-23&date_to=2024-10-26`.
    - Returns aggregated statistics by day, showing the number of comments created and the number of blocked comments.
 
-6. **Automated Comment Responses**
+6. **Automated comment responses**
    - Users can enable automated responses to comments on their posts.
    - Responses are generated based on the content of the post and the comment, with a configurable delay set by the user.
 
-7. **Access Control**
+7. **Access control**
    - Users can edit / delete only their own post and comments
    - Post author can delete comments related to his posts
    - Admins can delete all posts and comments
@@ -52,7 +52,7 @@ To use the API, you need to create a user account and obtain a JWT token:
 
 - **Framework**: [Django Ninja](https://django-ninja.dev/)
 - **AI Moderation**: [GeminiAI](https://ai.google.dev/pricing) for free AI-based content moderation.
-- **Background Task Processing**: [Celery](https://docs.celeryproject.org/) to handle delayed responses.
+- **Background task processing**: [Celery](https://docs.celeryproject.org/) to handle delayed responses.
 
 ## Installation
 
@@ -118,25 +118,10 @@ To use the API, you need to create a user account and obtain a JWT token:
 
 ## API Endpoints
 
-- **Documentation**
+- **Swagger documentation with all API endpoints**:
   - `/api/docs`
-- **Admin**:
+- **Admin panel**:
   - `/admin`
-- **User**:
-  - `/api/user/`
-  - `/api/user/register`
-  - `/api/user/token/pair`
-  - `/api/user/token/refresh`
-  - `/api/user/token/obtain`
-- **Posts**:
-  - `/api/posts`
-  - `/api/posts/<post_id>`
-  - `/api/posts/<post_id>/toggle`
-- **Comments**:
-  - `/api/comments/post/<post_id>`
-  - `/api/comments/create/<post_id>`
-  - `/api/comments/<comment_id>`
-  - `/api/comments/daily-breakdown`
 
 ## Environment Variables
 
@@ -144,3 +129,8 @@ This project uses environment variables to manage sensitive
 settings like API keys, database configurations, etc. Ensure
 you create a `.env` file based on `.env.sample` in the root directory and set
 the required environment variables before running the project.
+
+## Requirements
+- **Python**: 3.8+ (recommended 3.12+)
+- **PostgreSQL**: 13.0+
+- **Redis**: 4.0+
