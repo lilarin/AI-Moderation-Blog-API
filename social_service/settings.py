@@ -66,7 +66,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "social_service.wsgi.application"
 
 
-USE_DOCKER = os.environ.get("USE_DOCKER", False)
+USE_DOCKER = os.environ.get("USE_DOCKER", "False").lower() == "true"
 
 if USE_DOCKER:
     ALLOWED_HOSTS = ["*"]
