@@ -24,8 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set Environment Variables
-        run: echo "SECRET_KEY=GITHUB_ACTIONS_UNSAFE_KEY" >> $GITHUB_ENV
+      - name: Set up .env file
+        run: echo "SECRET_KEY=GITHUB_ACTIONS_UNSAFE_KEY" > .env
 
       - name: Run flake8
         run: flake8
