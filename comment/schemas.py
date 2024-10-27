@@ -1,20 +1,24 @@
-from datetime import datetime, date
+from datetime import (
+    datetime,
+    date
+)
 from typing import Optional
-
 from django.db.models import QuerySet
 from ninja import (
     Schema,
     Field
 )
-
 from comment.models import Comment
 from user.schemas import UserSchema
 
 
-class CommentSchema(Schema):
+class BaseCommentSchema(Schema):
+    text: str = Field(min_length=6, max_length=255)
+
+
+class CommentSchema(BaseCommentSchema):
     id: int
     author: UserSchema
-    text: str = Field(min_length=6, max_length=255)
     created_at: datetime
     is_blocked: bool
     replies: list["CommentSchema"] = []
@@ -40,13 +44,12 @@ class CommentSchema(Schema):
         return root_comments
 
 
-class CreateCommentSchema(Schema):
-    text: str = Field(min_length=6, max_length=255)
+class CreateCommentSchema(BaseCommentSchema):
     parent_id: Optional[int] = None
 
 
-class UpdateCommentSchema(Schema):
-    text: str = Field(min_length=6, max_length=255)
+class UpdateCommentSchema(BaseCommentSchema):
+    pass
 
 
 class DateRangeSchema(Schema):
