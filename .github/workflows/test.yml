@@ -24,12 +24,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set Environment Variables
-        run: echo "SECRET_KEY=GITHUB_ACTIONS_UNSAFE_KEY" >> $GITHUB_ENV
-
       - name: Run flake8
         run: flake8
 
       - name: Run tests
+        env:
+          SECRET_KEY: GITHUB_ACTIONS_UNSAFE_KEY
         timeout-minutes: 5
         run: python manage.py test
