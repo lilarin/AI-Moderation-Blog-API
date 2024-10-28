@@ -12,6 +12,10 @@ genai.configure(api_key=SECRET_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 
+class GeminiException(Exception):
+    pass
+
+
 def generate_ai_response(
         prompt: str, bool_answer: bool = False
 ) -> str | None:
@@ -28,7 +32,7 @@ def generate_ai_response(
         if ai_response.candidates[0].finish_reason.name == "SAFETY":
             return "true"
         return ai_response.candidates[0].content.parts[0].text.strip()
-    except Exception:
+    except GeminiException:
         return
 
 
