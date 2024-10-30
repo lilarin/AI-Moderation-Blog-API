@@ -1,8 +1,7 @@
-from datetime import (
-    date,
-    timedelta
-)
+from datetime import date
 
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 from django.http import HttpRequest
 from ninja import Router, Query
 from ninja.errors import HttpError
@@ -130,15 +129,29 @@ def create_comment(
     return schemas.CommentSchema.from_orm(comment)
 
 
-def get_comments_count(target_date: date) -> tuple[int, int]:
-    total_comments = Comment.objects.filter(
-        created_at__date=target_date
-    ).count()
-    blocked_comments = Comment.objects.filter(
-        created_at__date=target_date, is_blocked=True
-    ).count()
-    return total_comments, blocked_comments
+def get_comments_daily_breakdown(date_from: date, date_to: date) -> list[schemas.CommentAnalytics]:
+    comments_aggregation = (
+        Comment.objects
+        .filter(created_at__date__range=(date_from, date_to))
+        .annotate(date=TruncDate('created_at'))
+        .values('date')
+        .annotate(
+            created_comments=Count('id'),
+            blocked_comments=Count('id', filter=Q(is_blocked=True))
+        )
+        .order_by('date')
+    )
 
+    analytics = [
+        schemas.CommentAnalytics(
+            date=item['date'],
+            created_comments=item['created_comments'],
+            blocked_comments=item['blocked_comments']
+        )
+        for item in comments_aggregation
+    ]
+
+    return analytics
 
 @router.get(
     "/daily-breakdown/",
@@ -158,15 +171,4 @@ def comments_daily_breakdown(
             "Incorrect range was entered"
         )
 
-    analytics = []
-    for i in range((date_to - date_from).days + 1):
-        search_date = date_from + timedelta(days=i)
-        created_comments, blocked_comments = get_comments_count(search_date)
-        analytics.append(
-            schemas.CommentAnalytics(
-                date=search_date,
-                created_comments=created_comments,
-                blocked_comments=blocked_comments
-            )
-        )
-    return analytics
+    return get_comments_daily_breakdown(date_from, date_to)
