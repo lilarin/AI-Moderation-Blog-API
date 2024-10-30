@@ -29,7 +29,7 @@ def generate_ai_response(
             return "true"
         return ai_response.candidates[0].content.parts[0].text.strip()
     except Exception as error:
-        print(f"Gemini exception occurred:", error)
+        print("Gemini exception occurred:", error)
 
 
 def block_decision(text: str) -> bool:

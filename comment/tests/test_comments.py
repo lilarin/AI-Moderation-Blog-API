@@ -41,7 +41,9 @@ class CommentAPITestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["text"], "New Comment")
-        self.assertTrue(models.Comment.objects.filter(text="New Comment").exists())
+        self.assertTrue(
+            models.Comment.objects.filter(text="New Comment").exists()
+        )
 
     def test_create_comment_unauthenticated(self):
         payload = {"text": "New Comment"}

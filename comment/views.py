@@ -129,29 +129,32 @@ def create_comment(
     return schemas.CommentSchema.from_orm(comment)
 
 
-def get_comments_daily_breakdown(date_from: date, date_to: date) -> list[schemas.CommentAnalytics]:
+def get_comments_daily_breakdown(
+        date_from: date, date_to: date
+) -> list[schemas.CommentAnalytics]:
     comments_aggregation = (
         Comment.objects
         .filter(created_at__date__range=(date_from, date_to))
-        .annotate(date=TruncDate('created_at'))
-        .values('date')
+        .annotate(date=TruncDate("created_at"))
+        .values("date")
         .annotate(
-            created_comments=Count('id'),
-            blocked_comments=Count('id', filter=Q(is_blocked=True))
+            created_comments=Count("id"),
+            blocked_comments=Count("id", filter=Q(is_blocked=True))
         )
-        .order_by('date')
+        .order_by("date")
     )
 
     analytics = [
         schemas.CommentAnalytics(
-            date=item['date'],
-            created_comments=item['created_comments'],
-            blocked_comments=item['blocked_comments']
+            date=item["date"],
+            created_comments=item["created_comments"],
+            blocked_comments=item["blocked_comments"]
         )
         for item in comments_aggregation
     ]
 
     return analytics
+
 
 @router.get(
     "/daily-breakdown/",
