@@ -12,7 +12,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="comments"
     )
-    text = models.CharField(max_length=255)
+    text = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     parent = models.ForeignKey(
         "self", null=True, blank=True,

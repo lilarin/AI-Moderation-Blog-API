@@ -11,7 +11,7 @@ class Post(models.Model):
         User, on_delete=models.CASCADE, related_name="posts"
     )
     title = models.CharField(max_length=255)
-    text = models.CharField(max_length=255)
+    text = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     reply_on_comments = models.BooleanField(default=True)
     reply_time = models.DurationField(default=timedelta(minutes=5))
