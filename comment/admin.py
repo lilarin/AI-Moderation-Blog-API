@@ -1,5 +1,5 @@
 from django.contrib import admin
-from comment.models import Comment
+import comment.models as models
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -9,4 +9,4 @@ class CommentAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
 
 
-admin.site.register(Comment, CommentAdmin)
+admin.site.register(models.Comment, CommentAdmin)

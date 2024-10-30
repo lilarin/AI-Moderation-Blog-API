@@ -13,24 +13,20 @@ from user.decorators import (
     change_password_validation,
     username_availability
 )
-from user.schemas import (
-    UserSchema,
-    UpdatePasswordSchema,
-    CreateUserSchema
-)
+import user.schemas as schemas
 
 router = Router()
 
 
-@router.get("", response=UserSchema, auth=JWTAuth())
-def get_user(request: HttpRequest) -> UserSchema:
-    return UserSchema.from_orm(request.user)
+@router.get("", response=schemas.UserSchema, auth=JWTAuth())
+def get_user(request: HttpRequest) -> schemas.UserSchema:
+    return schemas.UserSchema.from_orm(request.user)
 
 
 @router.patch("", auth=JWTAuth())
 @change_password_validation
 def update_password(
-        request: HttpRequest, payload: UpdatePasswordSchema
+        request: HttpRequest, payload: schemas.UpdatePasswordSchema
 ) -> Response:
     user = request.user
 
@@ -42,11 +38,11 @@ def update_password(
     )
 
 
-@router.post("/register", response=UserSchema)
+@router.post("/register", response=schemas.UserSchema)
 @username_availability
 def register_user(
-        request: HttpRequest, payload: CreateUserSchema
-) -> UserSchema:
+        request: HttpRequest, payload: schemas.CreateUserSchema
+) -> schemas.UserSchema:
     try:
         validate_password(payload.password)
     except ValidationError as error:
@@ -60,4 +56,4 @@ def register_user(
             username=payload.username
         )
         user.set_password(payload.password)
-    return UserSchema.from_orm(user)
+    return schemas.UserSchema.from_orm(user)

@@ -22,13 +22,7 @@ from comment.decorators import (
     has_delete_access,
     has_edit_access
 )
-from comment.schemas import (
-    CommentSchema,
-    CreateCommentSchema,
-    UpdateCommentSchema,
-    DateRangeSchema,
-    CommentAnalytics
-)
+import comment.schemas as schemas
 from post.decorators import post_exist
 from social_service.settings import (
     PAGE_PAGINATION_NUMBER,
@@ -40,13 +34,13 @@ router = Router()
 
 @router.get(
     "/post/{post_id}",
-    response={200: list[CommentSchema], 404: str}
+    response={200: list[schemas.CommentSchema], 404: str}
 )
 @paginate(PageNumberPagination, page_size=PAGE_PAGINATION_NUMBER)
 @post_exist
 def get_comments_by_post(
         request: HttpRequest, post_id: int
-) -> list[CommentSchema]:
+) -> list[schemas.CommentSchema]:
     comments = Comment.objects.filter(
         post_id=post_id
     ).select_related("author").prefetch_related("replies")
@@ -55,23 +49,23 @@ def get_comments_by_post(
             status.HTTP_404_NOT_FOUND,
             "Comments not found"
         )
-    return CommentSchema.build_comment_hierarchy(comments)
+    return schemas.CommentSchema.build_comment_hierarchy(comments)
 
 
 @router.patch(
     "/{comment_id}",
-    response={200: CommentSchema, 400: str, 404: str}, auth=JWTAuth()
+    response={200: schemas.CommentSchema, 400: str, 404: str}, auth=JWTAuth()
 )
 @comment_exist
 @has_edit_access
 def edit_comment(
         request: HttpRequest, comment_id: int,
-        payload: UpdateCommentSchema
-) -> CommentSchema:
+        payload: schemas.UpdateCommentSchema
+) -> schemas.CommentSchema:
     comment = Comment.objects.get(id=comment_id)
     comment.text = payload.text
     comment.save()
-    return CommentSchema.from_orm(comment)
+    return schemas.CommentSchema.from_orm(comment)
 
 
 @router.delete(
@@ -93,14 +87,14 @@ def delete_comment(
 
 @router.post(
     "/create/{post_id}",
-    response={200: CommentSchema, 400: str},
+    response={200: schemas.CommentSchema, 400: str},
     auth=JWTAuth()
 )
 @post_exist
 def create_comment(
         request: HttpRequest, post_id: int,
-        payload: CreateCommentSchema
-) -> CommentSchema:
+        payload: schemas.CreateCommentSchema
+) -> schemas.CommentSchema:
     decision = block_decision(payload.text)
     comment = Comment(
         post_id=post_id,
@@ -133,7 +127,7 @@ def create_comment(
             countdown=int(comment.post.reply_time.total_seconds())
         )
 
-    return CommentSchema.from_orm(comment)
+    return schemas.CommentSchema.from_orm(comment)
 
 
 def get_comments_count(target_date: date) -> tuple[int, int]:
@@ -148,13 +142,13 @@ def get_comments_count(target_date: date) -> tuple[int, int]:
 
 @router.get(
     "/daily-breakdown/",
-    response=list[CommentAnalytics]
+    response=list[schemas.CommentAnalytics]
 )
 @paginate(PageNumberPagination, page_size=BREAKDOWN_PAGINATION_NUMBER)
 def comments_daily_breakdown(
         request: HttpRequest,
-        params: DateRangeSchema = Query(...)
-) -> list[CommentAnalytics]:
+        params: schemas.DateRangeSchema = Query(...)
+) -> list[schemas.CommentAnalytics]:
     date_from = params.date_from
     date_to = params.date_to
 
@@ -169,7 +163,7 @@ def comments_daily_breakdown(
         search_date = date_from + timedelta(days=i)
         created_comments, blocked_comments = get_comments_count(search_date)
         analytics.append(
-            CommentAnalytics(
+            schemas.CommentAnalytics(
                 date=search_date,
                 created_comments=created_comments,
                 blocked_comments=blocked_comments

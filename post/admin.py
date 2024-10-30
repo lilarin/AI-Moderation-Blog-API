@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import Post
-from comment.models import Comment
+import comment.models as models
 
 
 class CommentInline(admin.TabularInline):
-    model = Comment
+    model = models.Comment
     extra = 1
 
 

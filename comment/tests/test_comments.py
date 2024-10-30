@@ -3,7 +3,7 @@ from django.test import (
     Client
 )
 from ninja_jwt.tokens import AccessToken
-from comment.models import Comment
+import comment.models as models
 from post.models import Post
 from django.contrib.auth import get_user_model
 
@@ -21,7 +21,7 @@ class CommentAPITestCase(TestCase):
         self.post = Post.objects.create(
             title="Test Post", text="Test Content", author=self.user
         )
-        self.comment = Comment.objects.create(
+        self.comment = models.Comment.objects.create(
             post=self.post, author=self.user, text="Test Comment"
         )
         self.client = Client()
@@ -41,7 +41,7 @@ class CommentAPITestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["text"], "New Comment")
-        self.assertTrue(Comment.objects.filter(text="New Comment").exists())
+        self.assertTrue(models.Comment.objects.filter(text="New Comment").exists())
 
     def test_create_comment_unauthenticated(self):
         payload = {"text": "New Comment"}
@@ -78,7 +78,7 @@ class CommentAPITestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
-            Comment.objects.filter(id=self.comment.id).exists()
+            models.Comment.objects.filter(id=self.comment.id).exists()
         )
 
     def test_delete_other_user_comment_without_permission(self):
@@ -88,7 +88,7 @@ class CommentAPITestCase(TestCase):
             text="Test Admin Content",
             author=self.admin_user
         )
-        admin_comment = Comment.objects.create(
+        admin_comment = models.Comment.objects.create(
             post=admin_post, author=self.admin_user, text="Test Admin Comment"
         )
 

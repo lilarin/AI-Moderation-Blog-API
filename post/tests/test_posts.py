@@ -4,7 +4,7 @@ from django.test import (
     Client
 )
 from django.contrib.auth import get_user_model
-from post.models import Post
+import post.models as models
 from ninja_jwt.tokens import AccessToken
 
 User = get_user_model()
@@ -19,7 +19,7 @@ class PostTestCase(TestCase):
             username="otheruser", password="password"
         )
         self.client = Client()
-        self.post = Post.objects.create(
+        self.post = models.Post.objects.create(
             author=self.user,
             title="Test Post",
             text="Test Content"
@@ -125,7 +125,7 @@ class PostTestCase(TestCase):
         self.authenticate()
         response = self.client.delete(f"/api/posts/{self.post.id}")
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(Post.objects.filter(id=self.post.id).exists())
+        self.assertFalse(models.Post.objects.filter(id=self.post.id).exists())
 
     def test_delete_post_no_access(self):
         self.authenticate(self.other_user)
