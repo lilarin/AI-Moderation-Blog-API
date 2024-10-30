@@ -34,9 +34,3 @@ class UpdatePostSchema(Schema):
     title: Optional[str] = Field(None, min_length=6, max_length=255)
     text: Optional[str] = Field(None, min_length=6, max_length=255)
     reply_time: Optional[timedelta] = None
-
-    @staticmethod
-    def resolve_reply_time(obj):
-        if not obj.reply_on_comments:
-            return None
-        return obj.reply_time
