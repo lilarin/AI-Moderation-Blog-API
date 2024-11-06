@@ -46,17 +46,5 @@ services:
       - redis
     restart: always
 
-  celery-beat:
-    build:
-      context: .
-    env_file:
-      - .env
-    volumes:
-      - ./:/app
-    command: celery -A social_service beat --loglevel=info
-    depends_on:
-      - redis
-    restart: always
-
 volumes:
   social_service_db_volume:
